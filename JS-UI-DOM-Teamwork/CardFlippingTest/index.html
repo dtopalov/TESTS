@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		#card{
+			width: 200px;
+			height: 300px;
+			border-radius: 10px;
+			font-family: Arial;
+			font-size: 20px;
+		}
+		.front{
+			background: #fff;
+			border: 1px solid black;
+			padding: 5px;
+			width: 200px;
+			height: 300px;
+			border-radius: 10px;
+		}
+		.back{
+			background: #c00;
+			padding: 5px;	
+			border: 1px solid black;
+			width: 200px;
+			height: 300px;
+			border-radius: 10px;
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<div id="card">
+		<div class="front">
+			Front side<br />
+			Some text<br />
+			Some text<br />
+			Some text<br />
+		</div>
+		<div class="back">
+			Back side<br />
+			Image or some<br />
+			canvas/SVG<br />graphics
+		</div>	
+	</div>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="scripts/flip.js"></script>
+	<script>
+		$(".back").css('display','block');
+		$("#card").flip({trigger: 'click', front: 'auto', back: 'auto'});
+	</script>
+</body>
+</html>
