@@ -28,10 +28,21 @@
 			border-radius: 10px;
 			display: none;
 		}
+		svg{
+			position: absolute;
+			top: 5px;
+			left: 300px;
+			width: 500px;
+			height: 300px;
+			border: 3px solid red;
+			border-radius: 10px;
+			background: #ccc;
+		}
+
 	</style>
 </head>
 <body>
-	<div id="card">
+	<!--<div id="card">
 		<div class="front">
 			Front side<br />
 			Some text<br />
@@ -43,12 +54,34 @@
 			Image or some<br />
 			canvas/SVG<br />graphics
 		</div>	
-	</div>
+	</div>-->
+	<svg>
+		<g id="g">
+			<rect id="rect1-back" class="card" fill="green" width="50" height="75" x="120" y="20" stroke="white" />
+			<rect id="rect1-front" class="card" fill="red" width="50" height="75" x="120" y="20" stroke="white" />
+		</g>
+		<g id="g2">
+			<rect id="rect2-back" class="card" fill="green" width="50" height="75" x="120" y="120" stroke="white" />
+			<rect id="rect2-front" class="card" fill="red" width="50" height="75" x="120" y="120" stroke="white" />
+		</g>
+	</svg>
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="scripts/flip.js"></script>
 	<script>
 		$(".back").css('display','block');
-		$("#card").flip({trigger: 'click', front: 'auto', back: 'auto'});
+		$("#card").flip({front: 'auto', back: 'auto'});
+		var front = $("#rect1-front"),
+			back = $("#rect1-back");
+			g1 = $("#g");
+
+		var front2 = $("#rect2-front"),
+			back2 = $("#rect2-back"),
+			g2 = $("#g2");
+
+		g1.flip({front: front, back: back});
+		
+		g2.flip({front: front2, back: back2});
+		
 	</script>
 </body>
 </html>

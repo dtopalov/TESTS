@@ -1,16 +1,24 @@
 (function( $ ) {
   var flip = function($dom, callback) {
     $dom.data("flipped", true);
-
     var rotateAxis = "rotate" + $dom.data("axis");
+
     $dom.find($dom.data("front")).css({
       transform: rotateAxis + ($dom.data("reverse") ? "(-180deg)" : "(180deg)"),
-      "z-index": "0"
+      "z-index": "0",
+      "backface-visibility": "hidden",
+      "opacity": "0"
+      //"display": "none"
+      //"transform-origin": "center 0 0",
+
     });
 
     $dom.find($dom.data("back")).css({
       transform: rotateAxis + "(0deg)",
-      "z-index": "1"
+      "z-index": "1",
+      //"display":"",
+      "opacity":"1",
+      "backface-visibility": "hidden"
     });
 
     //Providing a nicely wrapped up callback because transform is essentially async
@@ -28,12 +36,20 @@
     var rotateAxis = "rotate" + $dom.data("axis");
     $dom.find($dom.data("front")).css({
       transform: rotateAxis + "(0deg)",
-      "z-index": "1"
+      "backface-visibility": "hidden",
+      //"display":"",
+      "opacity":"1",
+      "z-index": "1",
+      //"transform-origin": "center center 0"
     });
 
     $dom.find($dom.data("back")).css({
       transform: rotateAxis + ($dom.data("reverse") ? "(180deg)" : "(-180deg)"),
-      "z-index": "0"
+      "z-index": "0",
+      "opacity":"0"
+      //"backface-visibility": "hidden",
+      //"display":"none",
+      //"transform-origin": "center 0 0"
     });
 
     //Providing a nicely wrapped up callback because transform is essentially async
@@ -61,6 +77,7 @@
       }
     }
   };
+
   $.fn.flip = function(options, callback) {
     if (typeof options == 'function'){
       //This allows flip to be called for setup with only a callback (default settings)
@@ -90,7 +107,7 @@
 
           var settings = $.extend({
             axis: "y",
-            reverse: false,
+            reverse: true,
             trigger: "click",
             speed: 500,
             forceHeight: false,
@@ -127,23 +144,25 @@
           });
 
           $dom.css({
-            perspective: perspective,
+            perspective: 100,
             position: "relative"
           });
 
           var speedInSec = settings.speed / 1000 || 0.5;
           var faces = $dom.find(settings.front).add(settings.back, $dom);
-          if (settings.forceHeight) {faces.outerHeight($dom.height());} else if (settings.autoSize) {faces.css({'height': '100%'});}
-          if (settings.forceWidth) {faces.outerWidth($dom.width());} else if (settings.autoSize) {faces.css({'width': '100%'});}
+          if (settings.forceHeight) {faces.outerHeight($dom.height());} else if (settings.autoSize) {faces.css({'height': '75px'});}
+          if (settings.forceWidth) {faces.outerWidth($dom.width());} else if (settings.autoSize) {faces.css({'width': '50px'});}
           faces.css({
             "backface-visibility": "hidden",
             "transform-style": "preserve-3d",
+            "transform-origin": "center 0 0",
             position: "absolute",
-            "z-index": "1"
+            "z-index": "1",
           });
           $dom.find($dom.data("back")).css({
             transform: rotateAxis + "(" + (settings.reverse? "180deg" : "-180deg") + ")",
-            "z-index": "0"
+            "z-index": "0",
+            
           });
           // not forcing width/height may cause an initial flip to show up on
           // page load when we apply the style to reverse the backface...
