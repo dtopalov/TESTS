@@ -55,32 +55,102 @@
 			canvas/SVG<br />graphics
 		</div>	
 	</div>-->
-	<svg>
-		<g id="g">
-			<rect id="rect1-back" class="card" fill="green" width="50" height="75" x="120" y="20" stroke="white" />
-			<rect id="rect1-front" class="card" fill="red" width="50" height="75" x="120" y="20" stroke="white" />
+	<!-- <button onclick="flipBack(g0)">Click</button> -->
+	<!-- <button onclick="closeCards()">Close</button> -->
+	<svg id="the-svg">
+		<!-- <g id="g0" class="card">
+			<rect id="rect1-back" fill="green" width="50" height="75" x="120" y="20" stroke="white" />
+			<rect id="rect1-front" fill="red" width="50" height="75" x="120" y="20" stroke="white" />
 		</g>
-		<g id="g2">
-			<rect id="rect2-back" class="card" fill="green" width="50" height="75" x="120" y="120" stroke="white" />
-			<rect id="rect2-front" class="card" fill="red" width="50" height="75" x="120" y="120" stroke="white" />
-		</g>
+		<g id="g1" class="card">
+			<rect id="rect2-back" fill="green" width="50" height="75" x="120" y="120" stroke="white" />
+			<rect id="rect2-front" fill="red" width="50" height="75" x="120" y="120" stroke="white" />
+		</g> -->
 	</svg>
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="scripts/flip.js"></script>
 	<script>
-		$(".back").css('display','block');
-		$("#card").flip({front: 'auto', back: 'auto'});
-		var front = $("#rect1-front"),
-			back = $("#rect1-back");
-			g1 = $("#g");
+		var svgNS = 'http://www.w3.org/2000/svg',
+			opened = 0,
+			openedLast;
 
-		var front2 = $("#rect2-front"),
-			back2 = $("#rect2-back"),
-			g2 = $("#g2");
+		function createCardSide(x, y, width, height, stroke){
+			var side = document.createElementNS(svgNS, 'rect');
+			side.setAttribute('x', x);
+			side.setAttribute('y', y);
+			side.setAttribute('width', width);
+			side.setAttribute('height', height);
+			side.setAttribute('stroke', stroke);
+			side.setAttribute('rx', 5);
+			side.setAttribute('ry', 5);
 
-		g1.flip({front: front, back: back});
+			return side;
+		}
+
+		var colors = ['green', 'blue', 'yellow', 'black', 'orange'];
+
+		function createCard(x, y, width, height, id, stroke, frontID, backID, frontFill){
+			var container = document.createElementNS(svgNS, 'g'),
+				fragment = document.createDocumentFragment(),
+				front = createCardSide(x, y, width, height, stroke),
+				back = createCardSide(x, y, width, height, stroke);
+				front.setAttribute('fill', frontFill);
+				front.setAttribute('id', frontID);
+				back.setAttribute('fill', 'red');
+				back.setAttribute('id', backID);
+
+				fragment.appendChild(front);
+				fragment.appendChild(back);
+				container.appendChild(fragment);
+				container.setAttribute('id', id);
+				container.setAttribute('class', 'card');
+
+			return container;
+		}
 		
-		g2.flip({front: front2, back: back2});
+		var fragment = document.createDocumentFragment();
+		var svg = document.getElementById('the-svg');
+		
+
+		for(var i = 0; i < 10; i +=1){
+			if (i < 5) {
+				fragment.appendChild(createCard(50 + 70*i, 20, 50, 75, 'card' + (i+1), 'white', 
+					'front' + (i + 1), 'back' + (i + 1), colors[i]));
+			} else {
+				fragment.appendChild(createCard(50 + (i - 5)*70, 120, 50, 75, 'card' + (i+1), 'white', 
+					'front' + (i + 1), 'back' + (i + 1), colors[i - 5]));
+			}
+		}
+
+		svg.appendChild(fragment);
+
+		for(i = 1; i <= 10; i += 1){
+			var front = $('#back' + i),
+				back = $('#front' + i);
+			$('#card' + i).flip({front: front, back: back});
+		}
+		
+		function closeCards(){
+			var cards = $(".card");
+
+			
+			for(var i = 0, len = cards.length; i < len; i+=1){
+				if(cards[i].children[0].style.zIndex*1){
+					var card = $("#card" + (i + 1));
+					flipBack(card);
+				}
+			}
+		}
+
+		function flipBack(card){	
+			card.flip(false, false);
+		}
+
+		function hideCards(card1, card2){
+			card1.fadeOut();
+			card2.fadeOut();
+		}
+
 		
 	</script>
 </body>

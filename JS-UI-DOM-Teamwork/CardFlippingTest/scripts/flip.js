@@ -1,7 +1,23 @@
 (function( $ ) {
   var flip = function($dom, callback) {
     $dom.data("flipped", true);
-    var rotateAxis = "rotate" + $dom.data("axis");
+    var rotateAxis = "rotate" + $dom.data("axis"),
+      same = false;
+
+    if(opened === 2){
+          closeCards();  
+        }  
+    if(openedLast){
+      if(openedLast[0].children[0].attributes[7].value === $dom[0].children[0].attributes[7].value){
+        same = true;
+      } else{
+        openedLast = $dom;
+      }
+    } else{
+      openedLast = $dom;  
+    }
+    
+    opened += 1;
 
     $dom.find($dom.data("front")).css({
       transform: rotateAxis + ($dom.data("reverse") ? "(-180deg)" : "(180deg)"),
@@ -21,6 +37,10 @@
       "backface-visibility": "hidden"
     });
 
+    if (same) {
+      hideCards(openedLast, $dom);
+    }
+
     //Providing a nicely wrapped up callback because transform is essentially async
      $dom.one(whichTransitionEvent(), function(){
         $(this).trigger('flip:done');
@@ -31,6 +51,11 @@
   };
 
   var unflip = function($dom, callback) {
+    if(opened >= 1 && ($dom.data().flipped) && callback !== false){
+      return;
+    }
+
+    opened -= 1;
     $dom.data("flipped", false);
 
     var rotateAxis = "rotate" + $dom.data("axis");
@@ -53,12 +78,12 @@
     });
 
     //Providing a nicely wrapped up callback because transform is essentially async
-     $dom.one(whichTransitionEvent(), function(){
-        $(this).trigger('flip:done');
-        if (callback !== undefined){
-          callback.call(this);
-        }
-      });
+     // $dom.one(whichTransitionEvent(), function(){
+     //    $(this).trigger('flip:done');
+     //    if (callback !== undefined){
+     //      callback.call(this);
+     //    }
+     //  });
   };
   // Function from David Walsh: http://davidwalsh.name/css-animation-callback licensed with http://opensource.org/licenses/MIT
   var whichTransitionEvent = function(){
@@ -87,7 +112,7 @@
       var $dom = $(this);
 
         if (options !== undefined && (typeof(options) == "boolean" || typeof(options) == "string")) { // Force flip the DOM
-          if (options == "toggle"){
+          if (options === "toggle"){
             options = !$dom.data("flipped");
           }
           if (options) {
@@ -137,7 +162,7 @@
           $dom.data("back", settings.back);
 
           var rotateAxis = "rotate" + (settings.axis.toLowerCase() == "x" ? "x" : "y"), 
-              perspective = $dom["outer" + (rotateAxis == "rotatex" ? "Height" : "Width")]() * 2;
+              perspective = 100;//$dom["outer" + (rotateAxis == "rotatex" ? "Height" : "Width")]() * 2;
 
           $dom.find($dom.data("back")).css({
             transform: rotateAxis + "(" + (settings.reverse? "180deg" : "-180deg") + ")"
@@ -157,11 +182,13 @@
             "transform-style": "preserve-3d",
             "transform-origin": "center 0 0",
             position: "absolute",
+            opacity: "1",
             "z-index": "1",
           });
           $dom.find($dom.data("back")).css({
             transform: rotateAxis + "(" + (settings.reverse? "180deg" : "-180deg") + ")",
             "z-index": "0",
+            opacity: "0"
             
           });
           // not forcing width/height may cause an initial flip to show up on
@@ -258,12 +285,14 @@
       if ($(this).data("flipped")){
         $(this).find($(this).data("front")).css({
           transform: rotateAxis + ($(this).data("reverse") ? "(-180deg)" : "(180deg)"),
-          "z-index": "0"
+          "z-index": "0",
+          opacity: 0
         });
       }else{
         $(this).find($(this).data("back")).css({
           transform: rotateAxis + "(" + ($(this).data("reverse")? "180deg" : "-180deg") + ")",
-          "z-index": "0"
+          "z-index": "0",
+          opacity: 0
         });
       }
       //Providing a nicely wrapped up callback because transform is essentially async
